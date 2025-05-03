@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -31,4 +31,85 @@
       });
   </script>
 </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <!-- Add Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-100 text-gray-800 font-sans flex flex-col items-center justify-center min-h-screen">
+  <h1 class="text-3xl font-bold text-center mt-4">Weather App</h1>
+
+  <!-- Search form for city input -->
+  <div class="mt-6">
+    <input type="text" id="city-input" placeholder="Enter city name" 
+      class="px-4 py-2 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <button id="search-btn" class="ml-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      Get Weather
+    </button>
+  </div>
+
+  <!-- Weather info -->
+  <h2 class="text-2xl font-semibold mt-6">Weather in <span id="city-name" class="text-blue-600">London</span></h2>
+  <p id="weather-info" class="text-lg mt-4">Loading...</p>
+
+  <script>
+    const apiKey = '779dc045d892b17f9531a05c52791bcc'; // Your OpenWeather API Key
+    const defaultCity = 'London'; // Default city
+
+    // Function to fetch weather data for a given city
+    function fetchWeather(city) {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch weather');
+          return response.json();
+        })
+        .then(data => {
+          const weather = data.weather[0].description;
+          const temp = data.main.temp;
+          document.getElementById('weather-info').innerText =
+            `Currently ${weather} with a temperature of ${temp}°C.`;
+          document.getElementById('city-name').innerText = city;
+        })
+        .catch(error => {
+          document.getElementById('weather-info').innerText = 'Error fetching weather.';
+          console.error(error);
+        });
+    }
+
+    // Fetch default city weather on page load
+    fetchWeather(defaultCity);
+
+    // Search button event listener
+    document.getElementById('search-btn').addEventListener('click', () => {
+      const cityInput = document.getElementById('city-input').value.trim();
+      if (cityInput) {
+        fetchWeather(cityInput);
+      } else {
+        document.getElementById('weather-info').innerText = 'Please enter a city name.';
+      }
+    });
+
+    // Optionally, add an Enter key listener to trigger search when pressing Enter
+    document.getElementById('city-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cityInput = document.getElementById('city-input').value.trim();
+        if (cityInput) {
+          fetchWeather(cityInput);
+        } else {
+          document.getElementById('weather-info').innerText = 'Please enter a city name.';
+        }
+      }
+    });
+  </script>
+</body>
 </html>
+
